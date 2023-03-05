@@ -1,0 +1,54 @@
+[gd_scene load_steps=6 format=3 uid="uid://lp0vl3jksjg1"]
+
+[ext_resource type="Texture2D" uid="uid://dam84rbvifkhx" path="res://assets/Players/heart.png" id="1_cwwj7"]
+[ext_resource type="Script" path="res://scripts/Life.gd" id="1_v7ya8"]
+[ext_resource type="Script" path="res://scripts/Point.gd" id="3_evf0h"]
+[ext_resource type="Script" path="res://scripts/Fps.gd" id="4_v6fnc"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_sbgct"]
+font_size = 42
+outline_size = 10
+outline_color = Color(0, 0, 0, 1)
+
+[node name="HUD" type="CanvasLayer"]
+
+[node name="Life" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_v7ya8")
+
+[node name="TextureRect" type="TextureRect" parent="Life"]
+layout_mode = 0
+offset_left = 21.0
+offset_top = 19.0
+offset_right = 275.0
+offset_bottom = 273.0
+scale = Vector2(0.2259, 0.2259)
+texture = ExtResource("1_cwwj7")
+expand_mode = 2
+stretch_mode = 1
+
+[node name="Point" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("3_evf0h")
+
+[node name="Label" type="Label" parent="Point"]
+layout_mode = 0
+offset_left = 988.0
+offset_top = 19.0
+offset_right = 1084.0
+offset_bottom = 80.0
+text = "0000"
+label_settings = SubResource("LabelSettings_sbgct")
+
+[node name="Fps" type="Label" parent="."]
+offset_left = 5.0
+offset_top = 611.0
+offset_right = 45.0
+offset_bottom = 634.0
+script = ExtResource("4_v6fnc")

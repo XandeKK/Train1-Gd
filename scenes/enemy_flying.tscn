@@ -1,0 +1,183 @@
+[gd_scene load_steps=13 format=3 uid="uid://cmc0emo4qirdj"]
+
+[ext_resource type="PackedScene" uid="uid://x0kl5aoq4nax" path="res://scenes/enemy.tscn" id="1_fac45"]
+[ext_resource type="Texture2D" uid="uid://csyxawct7deui" path="res://assets/Enemies/enemyFlying_4.png" id="2_320fi"]
+[ext_resource type="Texture2D" uid="uid://b67gm01qtyjh" path="res://assets/Enemies/enemyFlying_1.png" id="3_s85r8"]
+[ext_resource type="Texture2D" uid="uid://ccasaojb0yks4" path="res://assets/Enemies/enemyFlying_2.png" id="4_oj07b"]
+[ext_resource type="Texture2D" uid="uid://qc72hcij0oe1" path="res://assets/Enemies/enemyFlying_3.png" id="5_c8uy4"]
+
+[sub_resource type="GDScript" id="GDScript_mxfo7"]
+script/source = "extends CharacterBody2D
+
+@export var speed := 100.0
+@export var health := 1
+@export var can_take_damage := true
+
+@export var target : Player
+
+func _physics_process(delta):
+	if target == null:
+		return
+		
+	var direction = {
+		'x': 1 if target.position.x > position.x else -1,
+		'y': 1 if target.position.y > position.y else -1
+	}
+	velocity.x = speed * direction.x
+	velocity.y = speed * direction.y
+	
+	velocity.normalized()
+	
+	move_and_slide()
+
+func take_damage(value: int) -> void:
+	health -= value
+	if health <= 0:
+		$AnimationPlayer.play(\"Dead\")
+		set_physics_process(false)
+		$CollisionShape2D.queue_free()
+		await $AnimationPlayer.animation_finished
+		queue_free()
+"
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_pqqki"]
+size = Vector2(64, 37)
+
+[sub_resource type="Animation" id="Animation_vv8r5"]
+resource_name = "Dead"
+length = 0.3
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("AnimatedSprite2D:animation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [&"Dead"]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("AnimatedSprite2D:frame")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
+}
+
+[sub_resource type="Animation" id="Animation_bbdtl"]
+resource_name = "Flying"
+length = 0.4
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("AnimatedSprite2D:animation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [&"Flying"]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("AnimatedSprite2D:frame")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 1,
+"values": [0, 1, 2, 3]
+}
+
+[sub_resource type="Animation" id="Animation_eu7pw"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("AnimatedSprite2D:animation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [&"Flying"]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("AnimatedSprite2D:frame")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_j7ata"]
+_data = {
+"Dead": SubResource("Animation_vv8r5"),
+"Flying": SubResource("Animation_bbdtl"),
+"RESET": SubResource("Animation_eu7pw")
+}
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_fyufd"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_320fi")
+}],
+"loop": true,
+"name": &"Dead",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("3_s85r8")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_oj07b")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_c8uy4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_oj07b")
+}],
+"loop": true,
+"name": &"Flying",
+"speed": 5.0
+}]
+
+[node name="EnemyFlying" instance=ExtResource("1_fac45")]
+position = Vector2(0, 5)
+script = SubResource("GDScript_mxfo7")
+speed = 200.0
+can_take_damage = true
+
+[node name="CollisionShape2D" parent="." index="0"]
+position = Vector2(0, 0.5)
+shape = SubResource("RectangleShape2D_pqqki")
+
+[node name="AnimationPlayer" parent="." index="1"]
+autoplay = "Flying"
+libraries = {
+"": SubResource("AnimationLibrary_j7ata")
+}
+
+[node name="AnimatedSprite2D" parent="." index="2"]
+sprite_frames = SubResource("SpriteFrames_fyufd")
+animation = &"Flying"

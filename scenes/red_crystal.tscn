@@ -1,0 +1,114 @@
+[gd_scene load_steps=9 format=3 uid="uid://dfd5rtq1b5o0h"]
+
+[ext_resource type="PackedScene" uid="uid://hnqemtdcvbop" path="res://scenes/item.tscn" id="1_8ky8w"]
+[ext_resource type="Texture2D" uid="uid://6nqdt888m85y" path="res://assets/Items/redCrystal.png" id="2_mnacr"]
+[ext_resource type="Script" path="res://scripts/red_crystal.gd" id="2_olsoe"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_cc4uc"]
+size = Vector2(21, 21)
+
+[sub_resource type="Animation" id="Animation_hk0sn"]
+resource_name = "Idle"
+loop_mode = 2
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(0, -20)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("CollisionShape2D:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(0, -20)]
+}
+
+[sub_resource type="Animation" id="Animation_v5fja"]
+resource_name = "Get"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_76wil"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sprite2D:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 0)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("CollisionShape2D:position")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_1k7m1"]
+_data = {
+"Get": SubResource("Animation_v5fja"),
+"Idle": SubResource("Animation_hk0sn"),
+"RESET": SubResource("Animation_76wil")
+}
+
+[node name="RedCrystal" instance=ExtResource("1_8ky8w")]
+script = ExtResource("2_olsoe")
+
+[node name="CollisionShape2D" parent="." index="0"]
+shape = SubResource("RectangleShape2D_cc4uc")
+
+[node name="Sprite2D" parent="." index="1"]
+texture = ExtResource("2_mnacr")
+
+[node name="AnimationPlayer" parent="." index="2"]
+autoplay = "Idle"
+libraries = {
+"": SubResource("AnimationLibrary_1k7m1")
+}
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
